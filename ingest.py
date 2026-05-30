@@ -42,11 +42,10 @@ def split_documents(docs: list, chunk_size: int, chunk_overlap: int) -> list:
 def get_vectorstore(
     persist_dir: str = config.CHROMA_DIR,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
 ) -> Chroma:
-    embeddings = OllamaEmbeddings(
-        model=config.EMBED_MODEL,
-        base_url=config.OLLAMA_BASE_URL,
-    )
+    embeddings = OllamaEmbeddings(model=embed_model, base_url=embed_base_url)
     return Chroma(
         persist_directory=persist_dir,
         embedding_function=embeddings,
@@ -58,12 +57,14 @@ def embed_and_store(
     chunks: list,
     persist_dir: str,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> Chroma:
     """Embed chunks in batches and store in ChromaDB. Calls progress_callback(done, total)."""
-    vs = get_vectorstore(persist_dir, collection_name)
+    vs = get_vectorstore(persist_dir, collection_name, embed_model, embed_base_url)
     total = len(chunks)
-    embed_batch = 100  # chunks per Ollama embedding call batch
+    embed_batch = 100
     for i in range(0, total, embed_batch):
         batch = chunks[i: i + embed_batch]
         vs.add_documents(batch)
@@ -78,6 +79,8 @@ def ingest(
     chunk_overlap: int = config.CHUNK_OVERLAP,
     persist_dir: str = config.CHROMA_DIR,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> int:
     print(f"Loading documents from {source_dir} ...")
@@ -91,7 +94,8 @@ def ingest(
     print(f"  Created {len(chunks)} chunk(s).")
 
     print("Embedding and storing in Chroma ...")
-    embed_and_store(chunks, persist_dir, collection_name, progress_callback=progress_callback)
+    embed_and_store(chunks, persist_dir, collection_name, embed_model, embed_base_url,
+                    progress_callback=progress_callback)
     print(f"  Done. Vectorstore persisted to {persist_dir}")
     return len(chunks)
 
@@ -116,18 +120,22 @@ def _iter_all_in_batches(collection, include: list[str]) -> list[dict]:
 def get_all_chunks(
     persist_dir: str = config.CHROMA_DIR,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
 ) -> dict:
     """Return all chunks with ids, documents, and metadatas from ChromaDB."""
-    vs = get_vectorstore(persist_dir, collection_name)
+    vs = get_vectorstore(persist_dir, collection_name, embed_model, embed_base_url)
     return _iter_all_in_batches(vs._collection, include=["documents", "metadatas"])
 
 
 def list_sources(
     persist_dir: str = config.CHROMA_DIR,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
 ) -> list[str]:
     """Return sorted list of unique source filenames stored in ChromaDB."""
-    vs = get_vectorstore(persist_dir, collection_name)
+    vs = get_vectorstore(persist_dir, collection_name, embed_model, embed_base_url)
     data = _iter_all_in_batches(vs._collection, include=["metadatas"])
     sources = {
         Path(m["source"]).name
@@ -141,9 +149,11 @@ def delete_by_source(
     source_name: str,
     persist_dir: str = config.CHROMA_DIR,
     collection_name: str = config.CHROMA_COLLECTION,
+    embed_model: str = config.EMBED_MODEL,
+    embed_base_url: str = config.OLLAMA_BASE_URL,
 ) -> int:
     """Delete all chunks whose source filename matches source_name. Returns count deleted."""
-    vs = get_vectorstore(persist_dir, collection_name)
+    vs = get_vectorstore(persist_dir, collection_name, embed_model, embed_base_url)
     data = _iter_all_in_batches(vs._collection, include=["metadatas"])
     ids_to_delete = [
         doc_id

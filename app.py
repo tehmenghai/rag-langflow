@@ -15,6 +15,7 @@ import streamlit as st
 
 import config
 from ingest import ingest, list_sources, delete_by_source, get_all_chunks
+from json_flow_runner import FlowSettings, parse_langflow_json, ask_from_flow
 from langflow_client import ClassicRAGTrace, AgenticRAGTrace, LangflowClient, RetrievedChunk
 from query import ask, ask_agentic
 
@@ -34,6 +35,8 @@ _DEFAULTS: dict = {
     "agentic_trace": None,
     "local_trace": None,
     "local_agentic_trace": None,
+    "json_trace": None,
+    "json_flow_settings": None,
     "langflow_url": config.LANGFLOW_BASE_URL,
 }
 for _k, _v in _DEFAULTS.items():
@@ -70,6 +73,25 @@ def _local_ask_agentic(question: str) -> AgenticRAGTrace:
         return ask_agentic(question)
     except Exception as e:
         return AgenticRAGTrace(query=question, error=str(e))
+
+
+def _json_ask(question: str, settings: FlowSettings) -> ClassicRAGTrace:
+    """Run RAG using settings parsed from a Langflow JSON and return a ClassicRAGTrace."""
+    try:
+        result = ask_from_flow(question, settings)
+        chunks = [
+            RetrievedChunk(content=src["content"], source=src["source"])
+            for src in result["sources"]
+        ]
+        return ClassicRAGTrace(
+            query=question,
+            retrieved_chunks=chunks,
+            model_used=result["model_used"],
+            prompt_template=result["prompt_template"],
+            answer=result["answer"],
+        )
+    except Exception as e:
+        return ClassicRAGTrace(query=question, error=str(e))
 
 
 # ── Panel render functions ────────────────────────────────────────────────────
@@ -234,11 +256,17 @@ with st.sidebar:
     st.title("🔧 Configuration")
 
     # Backend mode selector
+    _modes = ["Local LangChain", "Langflow JSON", "Langflow"]
+    _cur_idx = _modes.index(st.session_state.backend_mode) if st.session_state.backend_mode in _modes else 0
     backend_mode = st.radio(
         "Backend",
-        ["Local LangChain", "Langflow"],
-        index=0 if st.session_state.backend_mode == "Local LangChain" else 1,
-        help="Local LangChain uses Ollama + local ChromaDB. Langflow calls the Langflow Desktop API.",
+        _modes,
+        index=_cur_idx,
+        help=(
+            "Local LangChain: Ollama + ChromaDB via config.py\n"
+            "Langflow JSON: load a flow JSON and run offline\n"
+            "Langflow: call the live Langflow Desktop API"
+        ),
     )
     st.session_state.backend_mode = backend_mode
 
@@ -250,6 +278,39 @@ with st.sidebar:
         st.caption(f"Embed model: `{config.EMBED_MODEL}`")
         st.caption(f"LLM: `{config.LLM_MODEL}`")
         st.caption(f"ChromaDB: `{config.CHROMA_DIR}`")
+
+    elif backend_mode == "Langflow JSON":
+        st.subheader("Langflow JSON Flow")
+        uploaded_json = st.file_uploader(
+            "Upload a Langflow flow JSON",
+            type=["json"],
+            key="_json_uploader",
+        )
+        if uploaded_json is not None:
+            try:
+                import tempfile as _tmp
+                with _tmp.NamedTemporaryFile(suffix=".json", delete=False) as tf:
+                    tf.write(uploaded_json.read())
+                    tf_path = tf.name
+                settings = parse_langflow_json(tf_path)
+                st.session_state.json_flow_settings = settings
+                for w in settings.warnings:
+                    st.warning(w)
+                st.success(f"Loaded: **{settings.source_file}**")
+                st.caption(f"LLM: `{settings.llm_model}` @ `{settings.llm_base_url}`")
+                st.caption(f"Embed: `{settings.embed_model}`")
+                st.caption(f"Collection: `{settings.collection_name}`")
+                st.caption(f"Persist dir: `{settings.persist_dir}`")
+                st.caption(f"Top-K: `{settings.top_k}`")
+            except Exception as e:
+                st.error(f"Failed to parse JSON: {e}")
+                st.session_state.json_flow_settings = None
+        elif st.session_state.json_flow_settings:
+            s = st.session_state.json_flow_settings
+            st.caption(f"Loaded: **{s.source_file}**")
+            st.caption(f"LLM: `{s.llm_model}` @ `{s.llm_base_url}`")
+            st.caption(f"Embed: `{s.embed_model}`")
+            st.caption(f"Collection: `{s.collection_name}`")
 
     else:  # Langflow
         st.subheader("Langflow Connection")
@@ -321,7 +382,7 @@ st.title("🔍 RAG Playground")
 mode_label = "Local LangChain" if st.session_state.backend_mode == "Local LangChain" else "Langflow + LangChain"
 st.caption(f"Backend: **{mode_label}**")
 
-if st.session_state.backend_mode == "Local LangChain":
+if st.session_state.backend_mode in ("Local LangChain", "Langflow JSON"):
     tab_ask, tab_ingest, tab_browse = st.tabs(["Ask", "Ingest", "Browse Collection"])
 else:
     tab_ask = st.tabs(["Ask"])[0]
@@ -349,6 +410,13 @@ with tab_ask:
                     f_agentic = executor.submit(_local_ask_agentic, query)
                     st.session_state.local_trace = f_classic.result()
                     st.session_state.local_agentic_trace = f_agentic.result()
+        elif st.session_state.backend_mode == "Langflow JSON":
+            settings = st.session_state.json_flow_settings
+            if not settings:
+                st.warning("Upload a Langflow JSON file in the sidebar first.")
+                st.stop()
+            with st.spinner(f"Running offline — model: `{settings.llm_model}`…"):
+                st.session_state.json_trace = _json_ask(query, settings)
         else:
             client = LangflowClient(
                 base_url=st.session_state.langflow_url,
@@ -378,6 +446,14 @@ with tab_ask:
             st.session_state.local_trace,
             st.session_state.local_agentic_trace,
         )
+    elif st.session_state.backend_mode == "Langflow JSON":
+        with col_classic:
+            s = st.session_state.json_flow_settings
+            title = f"⚙️ Classic RAG — {s.source_file}" if s else "⚙️ Classic RAG"
+            render_classic_panel(st.session_state.json_trace, title=title)
+        with col_agentic:
+            st.subheader("🤖 Agentic RAG")
+            st.info("Agentic RAG coming soon.")
     else:
         with col_classic:
             render_classic_panel(st.session_state.classic_trace)
@@ -390,15 +466,41 @@ with tab_ask:
         )
 
 
-# ── Ingest tab (Local LangChain only) ────────────────────────────────────────
+# ── Ingest tab (Local LangChain + Langflow JSON) ──────────────────────────────
 
 if tab_ingest is not None:
     with tab_ingest:
-        st.header("Ingest Documents")
-        st.caption(
-            "Chunks and embeds documents into the **local ChromaDB** — "
-            "used by the Local LangChain backend."
-        )
+        # Resolve ingest settings based on backend mode
+        _json_settings: FlowSettings | None = st.session_state.json_flow_settings
+        _is_json_mode = st.session_state.backend_mode == "Langflow JSON"
+
+        if _is_json_mode:
+            st.header("Ingest Documents")
+            if not _json_settings:
+                st.warning("Upload a Langflow JSON file in the sidebar first.")
+                st.stop()
+            st.caption(
+                f"Embedding into collection **`{_json_settings.collection_name}`** "
+                f"using `{_json_settings.embed_model}` — settings loaded from `{_json_settings.source_file}`."
+            )
+            _persist_dir = _json_settings.persist_dir
+            _collection = _json_settings.collection_name
+            _embed_model = _json_settings.embed_model
+            _embed_base_url = _json_settings.embed_base_url
+            _default_chunk_size = _json_settings.chunk_size
+            _default_chunk_overlap = _json_settings.chunk_overlap
+        else:
+            st.header("Ingest Documents")
+            st.caption(
+                "Chunks and embeds documents into the **local ChromaDB** — "
+                "used by the Local LangChain backend."
+            )
+            _persist_dir = config.CHROMA_DIR
+            _collection = config.CHROMA_COLLECTION
+            _embed_model = config.EMBED_MODEL
+            _embed_base_url = config.OLLAMA_BASE_URL
+            _default_chunk_size = config.CHUNK_SIZE
+            _default_chunk_overlap = config.CHUNK_OVERLAP
 
         uploaded_files = st.file_uploader(
             "Upload files (.txt, .pdf, .md)",
@@ -412,7 +514,7 @@ if tab_ingest is not None:
                 "Chunk size (tokens)",
                 min_value=100,
                 max_value=2000,
-                value=config.CHUNK_SIZE,
+                value=_default_chunk_size,
                 step=50,
                 help="Smaller chunks = finer retrieval; larger chunks = more context per hit.",
             )
@@ -421,7 +523,7 @@ if tab_ingest is not None:
                 "Chunk overlap (tokens)",
                 min_value=0,
                 max_value=400,
-                value=config.CHUNK_OVERLAP,
+                value=_default_chunk_overlap,
                 step=10,
             )
 
@@ -433,7 +535,7 @@ if tab_ingest is not None:
                         out.write(f.getbuffer())
 
                 try:
-                    from ingest import load_documents, split_documents
+                    from ingest import load_documents, split_documents, embed_and_store
 
                     with st.spinner("Loading and chunking documents…"):
                         docs = load_documents(tmp_dir)
@@ -449,38 +551,40 @@ if tab_ingest is not None:
                     status_text = st.empty()
 
                     def _update_progress(done: int, total: int) -> None:
-                        pct = done / total
-                        progress_bar.progress(pct)
+                        progress_bar.progress(done / total)
                         status_text.caption(f"Embedding chunk {done} / {total}")
 
-                    from ingest import embed_and_store
-                    embed_and_store(chunks, config.CHROMA_DIR, progress_callback=_update_progress)
-
+                    embed_and_store(
+                        chunks, _persist_dir, _collection,
+                        _embed_model, _embed_base_url,
+                        progress_callback=_update_progress,
+                    )
                     progress_bar.progress(1.0)
                     status_text.empty()
                     st.success(f"Done! Stored {n_chunks} chunks from {len(uploaded_files)} file(s).")
                 except Exception as e:
                     st.error(f"Ingestion failed: {e}")
 
-        st.divider()
-        st.subheader("Or ingest sample docs")
-        if st.button("Ingest sample docs"):
-            if not os.path.isdir(config.DOCS_DIR):
-                st.warning(f"Sample docs directory `{config.DOCS_DIR}` not found.")
-            else:
-                with st.spinner("Ingesting sample docs …"):
-                    try:
-                        n = ingest(persist_dir=config.CHROMA_DIR)
-                        st.success(f"Done! Created {n} chunks.")
-                    except Exception as e:
-                        st.error(f"Failed: {e}")
+        if not _is_json_mode:
+            st.divider()
+            st.subheader("Or ingest sample docs")
+            if st.button("Ingest sample docs"):
+                if not os.path.isdir(config.DOCS_DIR):
+                    st.warning(f"Sample docs directory `{config.DOCS_DIR}` not found.")
+                else:
+                    with st.spinner("Ingesting sample docs …"):
+                        try:
+                            n = ingest(persist_dir=config.CHROMA_DIR)
+                            st.success(f"Done! Created {n} chunks.")
+                        except Exception as e:
+                            st.error(f"Failed: {e}")
 
         st.divider()
         st.subheader("Manage Collection")
         st.caption("Remove previously ingested documents from ChromaDB.")
 
         try:
-            sources = list_sources(config.CHROMA_DIR)
+            sources = list_sources(_persist_dir, _collection, _embed_model, _embed_base_url)
         except Exception:
             sources = []
 
@@ -497,7 +601,8 @@ if tab_ingest is not None:
                 errors = []
                 for src in to_delete:
                     try:
-                        total += delete_by_source(src, config.CHROMA_DIR)
+                        total += delete_by_source(src, _persist_dir, _collection,
+                                                  _embed_model, _embed_base_url)
                     except Exception as e:
                         errors.append(f"{src}: {e}")
                 if errors:
@@ -516,8 +621,19 @@ if tab_browse is not None:
         if st.button("Refresh", key="_browse_refresh"):
             st.rerun()
 
+        _b_settings: FlowSettings | None = st.session_state.json_flow_settings
+        _b_is_json = st.session_state.backend_mode == "Langflow JSON"
+        _b_persist = _b_settings.persist_dir if _b_is_json and _b_settings else config.CHROMA_DIR
+        _b_collection = _b_settings.collection_name if _b_is_json and _b_settings else config.CHROMA_COLLECTION
+        _b_embed = _b_settings.embed_model if _b_is_json and _b_settings else config.EMBED_MODEL
+        _b_base_url = _b_settings.embed_base_url if _b_is_json and _b_settings else config.OLLAMA_BASE_URL
+
+        if _b_is_json and not _b_settings:
+            st.warning("Upload a Langflow JSON file in the sidebar first.")
+            st.stop()
+
         try:
-            data = get_all_chunks(config.CHROMA_DIR)
+            data = get_all_chunks(_b_persist, _b_collection, _b_embed, _b_base_url)
         except Exception as e:
             st.error(f"Could not load ChromaDB: {e}")
             data = None

@@ -7,7 +7,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ChatInput",
-            "id": "ChatInput-hq3af",
+            "id": "ChatInput-wKWao",
             "name": "message",
             "output_types": [
               "Message"
@@ -15,7 +15,7 @@
           },
           "targetHandle": {
             "fieldName": "question",
-            "id": "Prompt-74EGr",
+            "id": "Prompt-CV5QN",
             "inputTypes": [
               "Message",
               "Text"
@@ -23,12 +23,12 @@
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ChatInput-hq3af{œdataTypeœ:œChatInputœ,œidœ:œChatInput-hq3afœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-Prompt-74EGr{œfieldNameœ:œquestionœ,œidœ:œPrompt-74EGrœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ChatInput-wKWao{œdataTypeœ:œChatInputœ,œidœ:œChatInput-wKWaoœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-Prompt-CV5QN{œfieldNameœ:œquestionœ,œidœ:œPrompt-CV5QNœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ChatInput-hq3af",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-hq3afœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "Prompt-74EGr",
-        "targetHandle": "{œfieldNameœ:œquestionœ,œidœ:œPrompt-74EGrœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}"
+        "source": "ChatInput-wKWao",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-wKWaoœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "Prompt-CV5QN",
+        "targetHandle": "{œfieldNameœ:œquestionœ,œidœ:œPrompt-CV5QNœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -36,7 +36,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "Prompt",
-            "id": "Prompt-74EGr",
+            "id": "Prompt-CV5QN",
             "name": "prompt",
             "output_types": [
               "Message"
@@ -44,19 +44,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "LanguageModelComponent-AvoDG",
+            "id": "LanguageModelComponent-HwnAj",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-Prompt-74EGr{œdataTypeœ:œPromptœ,œidœ:œPrompt-74EGrœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}-LanguageModelComponent-AvoDG{œfieldNameœ:œinput_valueœ,œidœ:œLanguageModelComponent-AvoDGœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-Prompt-CV5QN{œdataTypeœ:œPromptœ,œidœ:œPrompt-CV5QNœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}-LanguageModelComponent-HwnAj{œfieldNameœ:œinput_valueœ,œidœ:œLanguageModelComponent-HwnAjœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "Prompt-74EGr",
-        "sourceHandle": "{œdataTypeœ:œPromptœ,œidœ:œPrompt-74EGrœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "LanguageModelComponent-AvoDG",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œLanguageModelComponent-AvoDGœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "Prompt-CV5QN",
+        "sourceHandle": "{œdataTypeœ:œPromptœ,œidœ:œPrompt-CV5QNœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "LanguageModelComponent-HwnAj",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œLanguageModelComponent-HwnAjœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -64,7 +64,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "LanguageModelComponent",
-            "id": "LanguageModelComponent-AvoDG",
+            "id": "LanguageModelComponent-HwnAj",
             "name": "text_output",
             "output_types": [
               "Message"
@@ -72,7 +72,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-OVqfc",
+            "id": "ChatOutput-3s1mo",
             "inputTypes": [
               "Data",
               "JSON",
@@ -83,12 +83,12 @@
             "type": "str"
           }
         },
-        "id": "reactflow__edge-LanguageModelComponent-AvoDG{œdataTypeœ:œLanguageModelComponentœ,œidœ:œLanguageModelComponent-AvoDGœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-OVqfc{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-OVqfcœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-LanguageModelComponent-HwnAj{œdataTypeœ:œLanguageModelComponentœ,œidœ:œLanguageModelComponent-HwnAjœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-3s1mo{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-3s1moœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "LanguageModelComponent-AvoDG",
-        "sourceHandle": "{œdataTypeœ:œLanguageModelComponentœ,œidœ:œLanguageModelComponent-AvoDGœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-OVqfc",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-OVqfcœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œstrœ}"
+        "source": "LanguageModelComponent-HwnAj",
+        "sourceHandle": "{œdataTypeœ:œLanguageModelComponentœ,œidœ:œLanguageModelComponent-HwnAjœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-3s1mo",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-3s1moœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -96,7 +96,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "SplitText",
-            "id": "SplitText-I478l",
+            "id": "SplitText-s8gEu",
             "name": "dataframe",
             "output_types": [
               "Table"
@@ -104,7 +104,7 @@
           },
           "targetHandle": {
             "fieldName": "ingest_data",
-            "id": "Chroma-a7zo2",
+            "id": "Chroma-0uNH8",
             "inputTypes": [
               "Data",
               "DataFrame",
@@ -113,12 +113,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__SplitText-I478l{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-I478lœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}-Chroma-a7zo2{œfieldNameœ:œingest_dataœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œDataœ,œDataFrameœ,œTableœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-SplitText-s8gEu{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-s8gEuœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}-Chroma-0uNH8{œfieldNameœ:œingest_dataœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œDataœ,œDataFrameœ,œTableœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "SplitText-I478l",
-        "sourceHandle": "{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-I478lœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}",
-        "target": "Chroma-a7zo2",
-        "targetHandle": "{œfieldNameœ:œingest_dataœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œDataœ,œDataFrameœ,œTableœ],œtypeœ:œotherœ}"
+        "source": "SplitText-s8gEu",
+        "sourceHandle": "{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-s8gEuœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}",
+        "target": "Chroma-0uNH8",
+        "targetHandle": "{œfieldNameœ:œingest_dataœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œDataœ,œDataFrameœ,œTableœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -126,7 +126,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "EmbeddingModel",
-            "id": "EmbeddingModel-Io9Ea",
+            "id": "EmbeddingModel-PLi6D",
             "name": "embeddings",
             "output_types": [
               "Embeddings"
@@ -134,19 +134,107 @@
           },
           "targetHandle": {
             "fieldName": "embedding",
-            "id": "Chroma-a7zo2",
+            "id": "Chroma-0uNH8",
             "inputTypes": [
               "Embeddings"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__EmbeddingModel-Io9Ea{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-Io9Eaœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-Chroma-a7zo2{œfieldNameœ:œembeddingœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-EmbeddingModel-PLi6D{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-PLi6Dœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-Chroma-0uNH8{œfieldNameœ:œembeddingœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "EmbeddingModel-Io9Ea",
-        "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-Io9Eaœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
-        "target": "Chroma-a7zo2",
-        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
+        "source": "EmbeddingModel-PLi6D",
+        "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-PLi6Dœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
+        "target": "Chroma-0uNH8",
+        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "ChatInput",
+            "id": "ChatInput-wKWao",
+            "name": "message",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "search_query",
+            "id": "Chroma-0uNH8",
+            "inputTypes": [
+              "Message"
+            ],
+            "type": "query"
+          }
+        },
+        "id": "reactflow__edge-ChatInput-wKWao{œdataTypeœ:œChatInputœ,œidœ:œChatInput-wKWaoœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-Chroma-0uNH8{œfieldNameœ:œsearch_queryœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}",
+        "selected": false,
+        "source": "ChatInput-wKWao",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-wKWaoœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "Chroma-0uNH8",
+        "targetHandle": "{œfieldNameœ:œsearch_queryœ,œidœ:œChroma-0uNH8œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "Chroma",
+            "id": "Chroma-0uNH8",
+            "name": "search_results",
+            "output_types": [
+              "JSON"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "input_data",
+            "id": "ParserComponent-W0bfS",
+            "inputTypes": [
+              "DataFrame",
+              "Table",
+              "Data",
+              "JSON"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "reactflow__edge-Chroma-0uNH8{œdataTypeœ:œChromaœ,œidœ:œChroma-0uNH8œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œJSONœ]}-ParserComponent-W0bfS{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-W0bfSœ,œinputTypesœ:[œDataFrameœ,œTableœ,œDataœ,œJSONœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "Chroma-0uNH8",
+        "sourceHandle": "{œdataTypeœ:œChromaœ,œidœ:œChroma-0uNH8œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œJSONœ]}",
+        "target": "ParserComponent-W0bfS",
+        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-W0bfSœ,œinputTypesœ:[œDataFrameœ,œTableœ,œDataœ,œJSONœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "ParserComponent",
+            "id": "ParserComponent-W0bfS",
+            "name": "parsed_text",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "context",
+            "id": "Prompt-CV5QN",
+            "inputTypes": [
+              "Message",
+              "Text"
+            ],
+            "type": "str"
+          }
+        },
+        "id": "reactflow__edge-ParserComponent-W0bfS{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-W0bfSœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}-Prompt-CV5QN{œfieldNameœ:œcontextœ,œidœ:œPrompt-CV5QNœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}",
+        "selected": false,
+        "source": "ParserComponent-W0bfS",
+        "sourceHandle": "{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-W0bfSœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "Prompt-CV5QN",
+        "targetHandle": "{œfieldNameœ:œcontextœ,œidœ:œPrompt-CV5QNœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -154,7 +242,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "File",
-            "id": "File-86CEL",
+            "id": "File-YOFiW",
             "name": "dataframe",
             "output_types": [
               "Table"
@@ -162,7 +250,7 @@
           },
           "targetHandle": {
             "fieldName": "data_inputs",
-            "id": "SplitText-I478l",
+            "id": "SplitText-s8gEu",
             "inputTypes": [
               "Data",
               "JSON",
@@ -173,100 +261,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__File-86CEL{œdataTypeœ:œFileœ,œidœ:œFile-86CELœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}-SplitText-I478l{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-I478lœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "xy-edge__File-YOFiW{œdataTypeœ:œFileœ,œidœ:œFile-YOFiWœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}-SplitText-s8gEu{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-s8gEuœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "File-86CEL",
-        "sourceHandle": "{œdataTypeœ:œFileœ,œidœ:œFile-86CELœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}",
-        "target": "SplitText-I478l",
-        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-I478lœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "ChatInput",
-            "id": "ChatInput-hq3af",
-            "name": "message",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "search_query",
-            "id": "Chroma-a7zo2",
-            "inputTypes": [
-              "Message"
-            ],
-            "type": "query"
-          }
-        },
-        "id": "xy-edge__ChatInput-hq3af{œdataTypeœ:œChatInputœ,œidœ:œChatInput-hq3afœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-Chroma-a7zo2{œfieldNameœ:œsearch_queryœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}",
-        "selected": false,
-        "source": "ChatInput-hq3af",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-hq3afœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "Chroma-a7zo2",
-        "targetHandle": "{œfieldNameœ:œsearch_queryœ,œidœ:œChroma-a7zo2œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "Chroma",
-            "id": "Chroma-a7zo2",
-            "name": "search_results",
-            "output_types": [
-              "JSON"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "input_data",
-            "id": "ParserComponent-MUYUg",
-            "inputTypes": [
-              "DataFrame",
-              "Table",
-              "Data",
-              "JSON"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__Chroma-a7zo2{œdataTypeœ:œChromaœ,œidœ:œChroma-a7zo2œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œJSONœ]}-ParserComponent-MUYUg{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-MUYUgœ,œinputTypesœ:[œDataFrameœ,œTableœ,œDataœ,œJSONœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "Chroma-a7zo2",
-        "sourceHandle": "{œdataTypeœ:œChromaœ,œidœ:œChroma-a7zo2œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œJSONœ]}",
-        "target": "ParserComponent-MUYUg",
-        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-MUYUgœ,œinputTypesœ:[œDataFrameœ,œTableœ,œDataœ,œJSONœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "ParserComponent",
-            "id": "ParserComponent-MUYUg",
-            "name": "parsed_text",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "context",
-            "id": "Prompt-74EGr",
-            "inputTypes": [
-              "Message",
-              "Text"
-            ],
-            "type": "str"
-          }
-        },
-        "id": "xy-edge__ParserComponent-MUYUg{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-MUYUgœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}-Prompt-74EGr{œfieldNameœ:œcontextœ,œidœ:œPrompt-74EGrœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}",
-        "selected": false,
-        "source": "ParserComponent-MUYUg",
-        "sourceHandle": "{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-MUYUgœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "Prompt-74EGr",
-        "targetHandle": "{œfieldNameœ:œcontextœ,œidœ:œPrompt-74EGrœ,œinputTypesœ:[œMessageœ,œTextœ],œtypeœ:œstrœ}"
+        "source": "File-YOFiW",
+        "sourceHandle": "{œdataTypeœ:œFileœ,œidœ:œFile-YOFiWœ,œnameœ:œdataframeœ,œoutput_typesœ:[œTableœ]}",
+        "target": "SplitText-s8gEu",
+        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-s8gEuœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
@@ -274,7 +274,7 @@
         "data": {
           "description": "Get chat inputs from the Playground.",
           "display_name": "Chat Input",
-          "id": "ChatInput-hq3af",
+          "id": "ChatInput-wKWao",
           "node": {
             "base_classes": [
               "Message"
@@ -298,7 +298,7 @@
             "frozen": false,
             "icon": "MessagesSquare",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "7a26c54d89ed",
               "dependencies": {
@@ -513,14 +513,14 @@
           "type": "ChatInput"
         },
         "dragging": false,
-        "id": "ChatInput-hq3af",
+        "id": "ChatInput-wKWao",
         "measured": {
           "height": 207,
           "width": 320
         },
         "position": {
-          "x": 2622.2394042741967,
-          "y": 1340.5736078991151
+          "x": 2317.9115273876455,
+          "y": 1204.9492279822825
         },
         "positionAbsolute": {
           "x": 743.9745420290319,
@@ -533,7 +533,7 @@
         "data": {
           "description": "Create a prompt template with dynamic variables.",
           "display_name": "Prompt",
-          "id": "Prompt-74EGr",
+          "id": "Prompt-CV5QN",
           "node": {
             "base_classes": [
               "Message"
@@ -563,7 +563,7 @@
             "is_input": null,
             "is_output": null,
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "3d3fd7b8a36f",
               "dependencies": {
@@ -728,14 +728,14 @@
           "type": "Prompt"
         },
         "dragging": false,
-        "id": "Prompt-74EGr",
+        "id": "Prompt-CV5QN",
         "measured": {
           "height": 429,
           "width": 320
         },
         "position": {
-          "x": 3043.4704679286037,
-          "y": 1330.1606638209983
+          "x": 2868.151147548308,
+          "y": 1267.3103414205148
         },
         "positionAbsolute": {
           "x": 1977.9097981422992,
@@ -748,7 +748,7 @@
         "data": {
           "description": "Split text into chunks based on specified criteria.",
           "display_name": "Split Text",
-          "id": "SplitText-I478l",
+          "id": "SplitText-s8gEu",
           "node": {
             "base_classes": [
               "Data",
@@ -773,7 +773,7 @@
             "frozen": false,
             "icon": "scissors-line-dashed",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "859adebdf672",
               "dependencies": {
@@ -975,14 +975,14 @@
           "type": "SplitText"
         },
         "dragging": false,
-        "id": "SplitText-I478l",
+        "id": "SplitText-s8gEu",
         "measured": {
           "height": 415,
           "width": 320
         },
         "position": {
-          "x": 1752.5928994344388,
-          "y": 1342.7825043187643
+          "x": 1128.4958440301605,
+          "y": 1033.9533501908859
         },
         "positionAbsolute": {
           "x": 1683.4543896546102,
@@ -995,7 +995,7 @@
         "data": {
           "description": "Display a chat message in the Playground.",
           "display_name": "Chat Output",
-          "id": "ChatOutput-OVqfc",
+          "id": "ChatOutput-3s1mo",
           "node": {
             "base_classes": [
               "Message"
@@ -1020,7 +1020,7 @@
             "frozen": false,
             "icon": "MessagesSquare",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "84009527d08c",
               "dependencies": {
@@ -1255,14 +1255,14 @@
           "type": "ChatOutput"
         },
         "dragging": false,
-        "id": "ChatOutput-OVqfc",
+        "id": "ChatOutput-3s1mo",
         "measured": {
           "height": 207,
           "width": 320
         },
         "position": {
-          "x": 3903.5201135288125,
-          "y": 1326.3641763719731
+          "x": 3698.4295878009193,
+          "y": 1286.66923590851
         },
         "positionAbsolute": {
           "x": 2734.385670401691,
@@ -1273,7 +1273,7 @@
       },
       {
         "data": {
-          "id": "File-86CEL",
+          "id": "File-YOFiW",
           "node": {
             "base_classes": [
               "Message"
@@ -1314,9 +1314,9 @@
             ],
             "frozen": false,
             "icon": "file-text",
-            "last_updated": "2026-05-30T05:46:42.679Z",
+            "last_updated": "2026-05-30T06:07:16.154Z",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "c20646f04f8e",
               "dependencies": {
@@ -1367,10 +1367,10 @@
             "pinned": false,
             "template": {
               "_frontend_node_flow_id": {
-                "value": "b5e405ab-b71b-495a-b3de-01efcfab6f14"
+                "value": "15e926cc-36d3-4de6-939c-881d0b18f663"
               },
               "_frontend_node_folder_id": {
-                "value": "8d6f8af5-dbae-4241-a6c2-7d0cbdb66bbb"
+                "value": "c4cefb20-87b6-4fd9-9bd0-fbd85b5c91f0"
               },
               "_type": "Component",
               "advanced_mode": {
@@ -1783,10 +1783,10 @@
                   "gz"
                 ],
                 "file_path": [
-                  "66ff632c-8a63-403e-a74f-1c1981ab84d2/attention_qkv_atomic_walkthrough.pdf",
-                  "66ff632c-8a63-403e-a74f-1c1981ab84d2/simple_perceptron_forward_backward_walkthrough.pdf",
-                  "66ff632c-8a63-403e-a74f-1c1981ab84d2/swarup-biswas-training-how-llm-work-v1.pdf",
-                  "66ff632c-8a63-403e-a74f-1c1981ab84d2/tiny_gpt_16_point_detailed_walkthrough_v2.pdf"
+                  "4e7fae61-6331-4a0a-8956-df685cae3a95/attention_qkv_atomic_walkthrough.pdf",
+                  "4e7fae61-6331-4a0a-8956-df685cae3a95/simple_perceptron_forward_backward_walkthrough.pdf",
+                  "4e7fae61-6331-4a0a-8956-df685cae3a95/swarup-biswas-training-how-llm-work-v1.pdf",
+                  "4e7fae61-6331-4a0a-8956-df685cae3a95/tiny_gpt_16_point_detailed_walkthrough_v2.pdf"
                 ],
                 "info": "Supported file extensions: csv, json, pdf, txt, md, mdx, yaml, yml, xml, html, htm, docx, py, sh, sql, js, ts, tsx, adoc, asciidoc, asc, bmp, dotx, dotm, docm, jpg, jpeg, png, potx, ppsx, pptm, potm, ppsm, pptx, tiff, xls, xlsx, xhtml, webp; optionally bundled in file extensions: zip, tar, tgz, bz2, gz",
                 "list": true,
@@ -1973,14 +1973,14 @@
           "type": "File"
         },
         "dragging": false,
-        "id": "File-86CEL",
+        "id": "File-YOFiW",
         "measured": {
           "height": 479,
           "width": 320
         },
         "position": {
-          "x": 1306.7704430457682,
-          "y": 1344.080632206664
+          "x": 687.3016677210962,
+          "y": 1171.570340344097
         },
         "selected": false,
         "type": "genericNode"
@@ -1988,7 +1988,7 @@
       {
         "data": {
           "_connectionMode": false,
-          "id": "LanguageModelComponent-AvoDG",
+          "id": "LanguageModelComponent-HwnAj",
           "node": {
             "base_classes": [
               "LanguageModel",
@@ -2015,9 +2015,9 @@
             ],
             "frozen": false,
             "icon": "brain-circuit",
-            "last_updated": "2026-05-30T05:46:42.683Z",
+            "last_updated": "2026-05-30T06:08:48.821Z",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "7fe3257f2169",
               "dependencies": {
@@ -2081,10 +2081,10 @@
             "priority": 0,
             "template": {
               "_frontend_node_flow_id": {
-                "value": "b5e405ab-b71b-495a-b3de-01efcfab6f14"
+                "value": "15e926cc-36d3-4de6-939c-881d0b18f663"
               },
               "_frontend_node_folder_id": {
-                "value": "8d6f8af5-dbae-4241-a6c2-7d0cbdb66bbb"
+                "value": "c4cefb20-87b6-4fd9-9bd0-fbd85b5c91f0"
               },
               "_type": "Component",
               "api_key": {
@@ -2209,7 +2209,6 @@
                 "name": "model",
                 "options": [
                   {
-                    "category": "Ollama",
                     "icon": "Ollama",
                     "metadata": {
                       "api_key_param": "api_key",
@@ -2217,7 +2216,8 @@
                       "context_length": 128000,
                       "max_tokens_field_name": "max_tokens",
                       "model_class": "ChatOllama",
-                      "model_name_param": "model"
+                      "model_name_param": "model",
+                      "not_enabled_locally": true
                     },
                     "name": "llama3.2:latest",
                     "provider": "Ollama"
@@ -2261,7 +2261,7 @@
                 ],
                 "list": false,
                 "list_add_label": "Add More",
-                "load_from_db": true,
+                "load_from_db": false,
                 "name": "ollama_base_url",
                 "override_skip": false,
                 "placeholder": "",
@@ -2274,7 +2274,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "OLLAMA_BASE_URL"
+                "value": "http://localhost:11434"
               },
               "project_id": {
                 "_input_type": "StrInput",
@@ -2383,14 +2383,14 @@
           "type": "LanguageModelComponent"
         },
         "dragging": false,
-        "id": "LanguageModelComponent-AvoDG",
+        "id": "LanguageModelComponent-HwnAj",
         "measured": {
           "height": 371,
           "width": 320
         },
         "position": {
-          "x": 3488.5022168973273,
-          "y": 1331.2131630018475
+          "x": 3273.4879560535687,
+          "y": 1255.1311937802097
         },
         "selected": false,
         "type": "genericNode"
@@ -2398,7 +2398,7 @@
       {
         "data": {
           "_connectionMode": false,
-          "id": "EmbeddingModel-Io9Ea",
+          "id": "EmbeddingModel-PLi6D",
           "node": {
             "base_classes": [
               "Embeddings"
@@ -2428,9 +2428,9 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2026-05-30T05:46:42.685Z",
+            "last_updated": "2026-05-30T06:06:56.525Z",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "59c007553b38",
               "dependencies": {
@@ -2469,10 +2469,10 @@
             "pinned": false,
             "template": {
               "_frontend_node_flow_id": {
-                "value": "b5e405ab-b71b-495a-b3de-01efcfab6f14"
+                "value": "15e926cc-36d3-4de6-939c-881d0b18f663"
               },
               "_frontend_node_folder_id": {
-                "value": "8d6f8af5-dbae-4241-a6c2-7d0cbdb66bbb"
+                "value": "c4cefb20-87b6-4fd9-9bd0-fbd85b5c91f0"
               },
               "_type": "Component",
               "api_base": {
@@ -2677,28 +2677,11 @@
                 "name": "model",
                 "options": [
                   {
-                    "category": "Ollama",
                     "icon": "Ollama",
                     "metadata": {
                       "embedding_class": "OllamaEmbeddings",
                       "model_type": "embeddings",
-                      "param_mapping": {
-                        "base_url": "base_url",
-                        "model": "model",
-                        "model_kwargs": "model_kwargs",
-                        "num_ctx": "num_ctx",
-                        "request_timeout": "request_timeout"
-                      }
-                    },
-                    "name": "nomic-embed-text-v2-moe:latest",
-                    "provider": "Ollama"
-                  },
-                  {
-                    "category": "Ollama",
-                    "icon": "Ollama",
-                    "metadata": {
-                      "embedding_class": "OllamaEmbeddings",
-                      "model_type": "embeddings",
+                      "not_enabled_locally": true,
                       "param_mapping": {
                         "base_url": "base_url",
                         "model": "model",
@@ -2875,21 +2858,21 @@
           "type": "EmbeddingModel"
         },
         "dragging": false,
-        "id": "EmbeddingModel-Io9Ea",
+        "id": "EmbeddingModel-PLi6D",
         "measured": {
           "height": 207,
           "width": 320
         },
         "position": {
-          "x": 1757.6379321394509,
-          "y": 1841.0979882167192
+          "x": 1316.5604813544787,
+          "y": 1762.6842191882797
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "Chroma-a7zo2",
+          "id": "Chroma-0uNH8",
           "node": {
             "base_classes": [
               "JSON",
@@ -2922,14 +2905,14 @@
             "frozen": false,
             "icon": "Chroma",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
-              "code_hash": "82d38624f19a",
+              "code_hash": "fb95c1b84d71",
               "dependencies": {
                 "dependencies": [
                   {
                     "name": "chromadb",
-                    "version": "1.5.8"
+                    "version": "1.5.9"
                   },
                   {
                     "name": "langchain_chroma",
@@ -2941,16 +2924,16 @@
                   },
                   {
                     "name": "lfx",
-                    "version": null
+                    "version": "0.4.5"
                   },
                   {
                     "name": "langchain_community",
-                    "version": "0.4.1"
+                    "version": "0.4.2"
                   }
                 ],
                 "total_dependencies": 5
               },
-              "module": "lfx.components.chroma.chroma.ChromaVectorStoreComponent"
+              "module": "custom_components.chroma_db"
             },
             "minimized": false,
             "output_types": [],
@@ -2960,8 +2943,11 @@
                 "cache": true,
                 "display_name": "Search Results",
                 "group_outputs": false,
+                "loop_types": null,
                 "method": "search_documents",
                 "name": "search_results",
+                "options": null,
+                "required_inputs": null,
                 "selected": "JSON",
                 "tool_mode": true,
                 "types": [
@@ -2974,8 +2960,12 @@
                 "cache": true,
                 "display_name": "Table",
                 "group_outputs": false,
+                "loop_types": null,
                 "method": "as_dataframe",
                 "name": "dataframe",
+                "options": null,
+                "required_inputs": null,
+                "selected": "Table",
                 "tool_mode": true,
                 "types": [
                   "Table"
@@ -3124,7 +3114,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "from copy import deepcopy\nfrom typing import TYPE_CHECKING\n\nfrom chromadb.config import Settings\nfrom langchain_chroma import Chroma\nfrom typing_extensions import override\n\nfrom lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.base.vectorstores.utils import chroma_collection_to_data\nfrom lfx.inputs.inputs import BoolInput, DropdownInput, HandleInput, IntInput, StrInput\nfrom lfx.schema.data import Data\n\nif TYPE_CHECKING:\n    from lfx.schema.dataframe import DataFrame\n\n\nclass ChromaVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Chroma Vector Store with search capabilities.\"\"\"\n\n    display_name: str = \"Chroma DB\"\n    description: str = \"Chroma Vector Store with search capabilities\"\n    name = \"Chroma\"\n    icon = \"Chroma\"\n\n    inputs = [\n        StrInput(\n            name=\"collection_name\",\n            display_name=\"Collection Name\",\n            value=\"langflow\",\n        ),\n        StrInput(\n            name=\"persist_directory\",\n            display_name=\"Persist Directory\",\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(name=\"embedding\", display_name=\"Embedding\", input_types=[\"Embeddings\"]),\n        StrInput(\n            name=\"chroma_server_cors_allow_origins\",\n            display_name=\"Server CORS Allow Origins\",\n            advanced=True,\n        ),\n        StrInput(\n            name=\"chroma_server_host\",\n            display_name=\"Server Host\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"chroma_server_http_port\",\n            display_name=\"Server HTTP Port\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"chroma_server_grpc_port\",\n            display_name=\"Server gRPC Port\",\n            advanced=True,\n        ),\n        BoolInput(\n            name=\"chroma_server_ssl_enabled\",\n            display_name=\"Server SSL Enabled\",\n            advanced=True,\n        ),\n        BoolInput(\n            name=\"allow_duplicates\",\n            display_name=\"Allow Duplicates\",\n            advanced=True,\n            info=\"If false, will not add documents that are already in the Vector Store.\",\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"Similarity\", \"MMR\"],\n            value=\"Similarity\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            info=\"Number of results to return.\",\n            advanced=True,\n            value=10,\n        ),\n        IntInput(\n            name=\"limit\",\n            display_name=\"Limit\",\n            advanced=True,\n            info=\"Limit the number of records to compare when Allow Duplicates is False.\",\n        ),\n    ]\n\n    @override\n    @check_cached_vector_store\n    def build_vector_store(self) -> Chroma:\n        \"\"\"Builds the Chroma object.\"\"\"\n        try:\n            from chromadb import Client\n            from langchain_chroma import Chroma\n        except ImportError as e:\n            msg = \"Could not import Chroma integration package. Please install it with `pip install langchain-chroma`.\"\n            raise ImportError(msg) from e\n        # Chroma settings\n        chroma_settings = None\n        client = None\n        if self.chroma_server_host:\n            chroma_settings = Settings(\n                chroma_server_cors_allow_origins=self.chroma_server_cors_allow_origins or [],\n                chroma_server_host=self.chroma_server_host,\n                chroma_server_http_port=self.chroma_server_http_port or None,\n                chroma_server_grpc_port=self.chroma_server_grpc_port or None,\n                chroma_server_ssl_enabled=self.chroma_server_ssl_enabled,\n            )\n            client = Client(settings=chroma_settings)\n\n        # Check persist_directory and expand it if it is a relative path\n        persist_directory = self.resolve_path(self.persist_directory) if self.persist_directory is not None else None\n\n        chroma = Chroma(\n            persist_directory=persist_directory,\n            client=client,\n            embedding_function=self.embedding,\n            collection_name=self.collection_name,\n        )\n\n        self._add_documents_to_vector_store(chroma)\n        limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None\n        self.status = chroma_collection_to_data(chroma.get(limit=limit))\n        return chroma\n\n    def _add_documents_to_vector_store(self, vector_store: \"Chroma\") -> None:\n        \"\"\"Adds documents to the Vector Store.\"\"\"\n        ingest_data: list | Data | DataFrame = self.ingest_data\n        if not ingest_data:\n            self.status = \"\"\n            return\n\n        # Convert DataFrame to Data if needed using parent's method\n        ingest_data = self._prepare_ingest_data()\n\n        stored_documents_without_id = []\n        if self.allow_duplicates:\n            stored_data = []\n        else:\n            limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None\n            stored_data = chroma_collection_to_data(vector_store.get(limit=limit))\n            for value in deepcopy(stored_data):\n                del value.id\n                stored_documents_without_id.append(value)\n\n        documents = []\n        for _input in ingest_data or []:\n            if isinstance(_input, Data):\n                if _input not in stored_documents_without_id:\n                    documents.append(_input.to_lc_document())\n            else:\n                msg = \"Vector Store Inputs must be Data objects.\"\n                raise TypeError(msg)\n\n        if documents and self.embedding is not None:\n            self.log(f\"Adding {len(documents)} documents to the Vector Store.\")\n            # Filter complex metadata to prevent ChromaDB errors\n            try:\n                from langchain_community.vectorstores.utils import filter_complex_metadata\n\n                filtered_documents = filter_complex_metadata(documents)\n                vector_store.add_documents(filtered_documents)\n            except ImportError:\n                self.log(\"Warning: Could not import filter_complex_metadata. Adding documents without filtering.\")\n                vector_store.add_documents(documents)\n        else:\n            self.log(\"No documents to add to the Vector Store.\")\n"
+                "value": "from copy import deepcopy\nfrom typing import TYPE_CHECKING\n\nfrom chromadb.config import Settings\nfrom langchain_chroma import Chroma\nfrom typing_extensions import override\n\nfrom lfx.base.vectorstores.chroma_security import chroma_langchain_collection_kwargs\nfrom lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.base.vectorstores.utils import chroma_collection_to_data\nfrom lfx.inputs.inputs import BoolInput, DropdownInput, HandleInput, IntInput, StrInput\nfrom lfx.schema.data import Data\n\nif TYPE_CHECKING:\n    from lfx.schema.dataframe import DataFrame\n\n\nclass ChromaVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Chroma Vector Store with search capabilities.\"\"\"\n\n    display_name: str = \"Chroma DB\"\n    description: str = \"Chroma Vector Store with search capabilities\"\n    name = \"Chroma\"\n    icon = \"Chroma\"\n\n    inputs = [\n        StrInput(\n            name=\"collection_name\",\n            display_name=\"Collection Name\",\n            value=\"langflow\",\n        ),\n        StrInput(\n            name=\"persist_directory\",\n            display_name=\"Persist Directory\",\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(name=\"embedding\", display_name=\"Embedding\", input_types=[\"Embeddings\"]),\n        StrInput(\n            name=\"chroma_server_cors_allow_origins\",\n            display_name=\"Server CORS Allow Origins\",\n            advanced=True,\n        ),\n        StrInput(\n            name=\"chroma_server_host\",\n            display_name=\"Server Host\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"chroma_server_http_port\",\n            display_name=\"Server HTTP Port\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"chroma_server_grpc_port\",\n            display_name=\"Server gRPC Port\",\n            advanced=True,\n        ),\n        BoolInput(\n            name=\"chroma_server_ssl_enabled\",\n            display_name=\"Server SSL Enabled\",\n            advanced=True,\n        ),\n        BoolInput(\n            name=\"allow_duplicates\",\n            display_name=\"Allow Duplicates\",\n            advanced=True,\n            info=\"If false, will not add documents that are already in the Vector Store.\",\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"Similarity\", \"MMR\"],\n            value=\"Similarity\",\n            advanced=True,\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            info=\"Number of results to return.\",\n            advanced=True,\n            value=10,\n        ),\n        IntInput(\n            name=\"limit\",\n            display_name=\"Limit\",\n            advanced=True,\n            info=\"Limit the number of records to compare when Allow Duplicates is False.\",\n        ),\n    ]\n\n    @override\n    @check_cached_vector_store\n    def build_vector_store(self) -> Chroma:\n        \"\"\"Builds the Chroma object.\"\"\"\n        try:\n            from chromadb import Client\n            from langchain_chroma import Chroma\n        except ImportError as e:\n            msg = \"Could not import Chroma integration package. Please install it with `pip install langchain-chroma`.\"\n            raise ImportError(msg) from e\n        # Chroma settings\n        chroma_settings = None\n        client = None\n        if self.chroma_server_host:\n            chroma_settings = Settings(\n                chroma_server_cors_allow_origins=self.chroma_server_cors_allow_origins or [],\n                chroma_server_host=self.chroma_server_host,\n                chroma_server_http_port=self.chroma_server_http_port or None,\n                chroma_server_grpc_port=self.chroma_server_grpc_port or None,\n                chroma_server_ssl_enabled=self.chroma_server_ssl_enabled,\n            )\n            client = Client(settings=chroma_settings)\n\n        # Check persist_directory and expand it if it is a relative path\n        persist_directory = self.resolve_path(self.persist_directory) if self.persist_directory is not None else None\n\n        chroma = Chroma(\n            persist_directory=persist_directory,\n            client=client,\n            embedding_function=self.embedding,\n            collection_name=self.collection_name,\n            **chroma_langchain_collection_kwargs(),\n        )\n\n        self._add_documents_to_vector_store(chroma)\n        limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None\n        self.status = chroma_collection_to_data(chroma.get(limit=limit))\n        return chroma\n\n    def _add_documents_to_vector_store(self, vector_store: \"Chroma\") -> None:\n        \"\"\"Adds documents to the Vector Store.\"\"\"\n        ingest_data: list | Data | DataFrame = self.ingest_data\n        if not ingest_data:\n            self.status = \"\"\n            return\n\n        # Convert DataFrame to Data if needed using parent's method\n        ingest_data = self._prepare_ingest_data()\n\n        stored_documents_without_id = []\n        if self.allow_duplicates:\n            stored_data = []\n        else:\n            limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None\n            stored_data = chroma_collection_to_data(vector_store.get(limit=limit))\n            for value in deepcopy(stored_data):\n                del value.id\n                stored_documents_without_id.append(value)\n\n        documents = []\n        for _input in ingest_data or []:\n            if isinstance(_input, Data):\n                if _input not in stored_documents_without_id:\n                    documents.append(_input.to_lc_document())\n            else:\n                msg = \"Vector Store Inputs must be Data objects.\"\n                raise TypeError(msg)\n\n        if documents and self.embedding is not None:\n            self.log(f\"Adding {len(documents)} documents to the Vector Store.\")\n            # Filter complex metadata to prevent ChromaDB errors\n            try:\n                from langchain_community.vectorstores.utils import filter_complex_metadata\n\n                filtered_documents = filter_complex_metadata(documents)\n                vector_store.add_documents(filtered_documents)\n            except ImportError:\n                self.log(\"Warning: Could not import filter_complex_metadata. Adding documents without filtering.\")\n                vector_store.add_documents(documents)\n        else:\n            self.log(\"No documents to add to the Vector Store.\")\n"
               },
               "collection_name": {
                 "_input_type": "StrInput",
@@ -3145,7 +3135,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "rag_docs2"
+                "value": "langflow_rag"
               },
               "embedding": {
                 "_input_type": "HandleInput",
@@ -3221,6 +3211,7 @@
                 "info": "Number of results to return.",
                 "list": false,
                 "list_add_label": "Add More",
+                "load_from_db": false,
                 "name": "number_of_results",
                 "override_skip": false,
                 "placeholder": "",
@@ -3231,7 +3222,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": true,
                 "type": "int",
-                "value": 10
+                "value": 3
               },
               "persist_directory": {
                 "_input_type": "StrInput",
@@ -3334,21 +3325,21 @@
           "type": "Chroma"
         },
         "dragging": false,
-        "id": "Chroma-a7zo2",
+        "id": "Chroma-0uNH8",
         "measured": {
           "height": 459,
           "width": 320
         },
         "position": {
-          "x": 2220.0773845642343,
-          "y": 1342.9591873169709
+          "x": 1675.10168981658,
+          "y": 1131.2420109401846
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "ParserComponent-MUYUg",
+          "id": "ParserComponent-W0bfS",
           "node": {
             "base_classes": [
               "Message"
@@ -3370,7 +3361,7 @@
             "icon": "braces",
             "last_updated": "2026-05-30T05:44:32.326Z",
             "legacy": false,
-            "lf_version": "1.9.2",
+            "lf_version": "1.9.0",
             "metadata": {
               "code_hash": "cda7b997a730",
               "dependencies": {
@@ -3562,30 +3553,30 @@
           "type": "ParserComponent"
         },
         "dragging": false,
-        "id": "ParserComponent-MUYUg",
+        "id": "ParserComponent-W0bfS",
         "measured": {
           "height": 249,
           "width": 320
         },
         "position": {
-          "x": 2637.8148136955456,
-          "y": 1634.389402337338
+          "x": 2290.4840846402426,
+          "y": 1650.928960863781
         },
         "selected": false,
         "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": -421.11210894138765,
-      "y": -239.85668096013148,
-      "zoom": 0.36204683956478007
+      "x": -1770.410259373924,
+      "y": -685.4808676509658,
+      "zoom": 0.6596978778352737
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",
   "endpoint_name": null,
-  "id": "b5e405ab-b71b-495a-b3de-01efcfab6f14",
+  "id": "15e926cc-36d3-4de6-939c-881d0b18f663",
   "is_component": false,
-  "last_tested_version": "1.9.2",
+  "last_tested_version": "1.9.0",
   "locked": false,
   "name": "Classic_Rag",
   "tags": [
