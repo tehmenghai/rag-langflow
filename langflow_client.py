@@ -42,6 +42,7 @@ class ClassicRAGTrace:
     prompt_template: str = ""
     answer: str = ""
     error: Optional[str] = None
+    elapsed_ms: Optional[float] = None
 
 
 @dataclass
@@ -53,11 +54,24 @@ class AgentStep:
 
 
 @dataclass
+class LoopIteration:
+    loop_num: int
+    query_used: str
+    chunks: list[RetrievedChunk] = field(default_factory=list)
+    best_score: float = float("inf")
+    passed: bool = False
+
+
+@dataclass
 class AgenticRAGTrace:
     query: str
     steps: list[AgentStep] = field(default_factory=list)
+    iterations: list[LoopIteration] = field(default_factory=list)
+    reranked: bool = False
     answer: str = ""
+    citations: list[RetrievedChunk] = field(default_factory=list)
     error: Optional[str] = None
+    elapsed_ms: Optional[float] = None
 
 
 # ── Client ────────────────────────────────────────────────────────────────────

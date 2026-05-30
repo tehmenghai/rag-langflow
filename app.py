@@ -16,7 +16,7 @@ import streamlit as st
 import config
 from ingest import ingest, list_sources, delete_by_source, get_all_chunks
 from langflow_client import ClassicRAGTrace, AgenticRAGTrace, LangflowClient, RetrievedChunk
-from query import ask
+from query import ask, ask_agentic
 
 # ── Page config ───────────────────────────────────────────────────────────────
 
@@ -33,6 +33,7 @@ _DEFAULTS: dict = {
     "classic_trace": None,
     "agentic_trace": None,
     "local_trace": None,
+    "local_agentic_trace": None,
     "langflow_url": config.LANGFLOW_BASE_URL,
 }
 for _k, _v in _DEFAULTS.items():
@@ -44,6 +45,8 @@ for _k, _v in _DEFAULTS.items():
 
 def _local_ask(question: str) -> ClassicRAGTrace:
     """Run local LangChain RAG and return a ClassicRAGTrace."""
+    import time as _time
+    t0 = _time.time()
     try:
         result = ask(question)
         chunks = [
@@ -55,9 +58,18 @@ def _local_ask(question: str) -> ClassicRAGTrace:
             retrieved_chunks=chunks,
             model_used=config.LLM_MODEL,
             answer=result["answer"],
+            elapsed_ms=(_time.time() - t0) * 1000,
         )
     except Exception as e:
         return ClassicRAGTrace(query=question, error=str(e))
+
+
+def _local_ask_agentic(question: str) -> AgenticRAGTrace:
+    """Run local agentic RAG with loop + rerank and return an AgenticRAGTrace."""
+    try:
+        return ask_agentic(question)
+    except Exception as e:
+        return AgenticRAGTrace(query=question, error=str(e))
 
 
 # ── Panel render functions ────────────────────────────────────────────────────
@@ -112,6 +124,36 @@ def render_agentic_panel(trace: AgenticRAGTrace | None) -> None:
         st.error(f"**Error:** {trace.error}")
         return
 
+    # ── Local agentic mode (loop-based, has iterations + citations) ───────────
+    if trace.iterations:
+        n_loops = len(trace.iterations)
+        passed = any(it.passed for it in trace.iterations)
+
+        if passed:
+            passing_loop = next(it.loop_num for it in trace.iterations if it.passed)
+            st.success(
+                f"Good match found on loop {passing_loop} of {n_loops} "
+                f"(score {next(it.best_score for it in trace.iterations if it.passed):.4f})"
+            )
+        elif trace.reranked:
+            st.warning(f"Threshold not met after {n_loops} loops — LLM reranking applied")
+
+        with st.expander("**Answer**", expanded=True):
+            st.markdown(trace.answer if trace.answer else "_No answer returned._")
+
+        if trace.citations:
+            n_cit = len(trace.citations)
+            with st.expander(f"**Citations** ({n_cit})", expanded=True):
+                for i, chunk in enumerate(trace.citations, 1):
+                    st.markdown(f"**[{i}] {chunk.source}**")
+                    if chunk.score is not None:
+                        st.caption(f"L2 distance: {chunk.score:.4f}")
+                    st.text(chunk.content[:400])
+                    if i < n_cit:
+                        st.divider()
+        return
+
+    # ── Langflow agentic mode (ReAct steps) ───────────────────────────────────
     n_steps = len(trace.steps)
     with st.expander(f"**Agent Reasoning** ({n_steps} step{'s' if n_steps != 1 else ''})", expanded=True):
         if not trace.steps:
@@ -131,6 +173,59 @@ def render_agentic_panel(trace: AgenticRAGTrace | None) -> None:
 
     with st.expander("**Final Answer**", expanded=True):
         st.markdown(trace.answer if trace.answer else "_No answer returned._")
+
+
+def render_observability_pane(
+    classic: ClassicRAGTrace | None,
+    agentic: AgenticRAGTrace | None,
+) -> None:
+    with st.expander("🔍 Observability & Trace", expanded=False):
+        obs_classic, obs_agentic = st.tabs(["Classic RAG", "Agentic RAG"])
+
+        with obs_classic:
+            if classic is None:
+                st.caption("No trace yet — run a query.")
+            elif classic.error:
+                st.error(classic.error)
+            else:
+                if classic.elapsed_ms is not None:
+                    st.caption(f"Elapsed: **{classic.elapsed_ms:.0f} ms** | Model: `{classic.model_used}`")
+                if not classic.retrieved_chunks:
+                    st.caption("No chunks retrieved.")
+                for i, chunk in enumerate(classic.retrieved_chunks, 1):
+                    st.markdown(f"**[{i}] `{chunk.source}`**")
+                    if chunk.score is not None:
+                        st.caption(f"L2 distance: {chunk.score:.4f}")
+                    st.caption(chunk.content[:300])
+                    if i < len(classic.retrieved_chunks):
+                        st.divider()
+
+        with obs_agentic:
+            if agentic is None:
+                st.caption("No trace yet — run a query.")
+            elif agentic.error:
+                st.error(agentic.error)
+            elif not agentic.iterations:
+                st.caption("Langflow mode — loop trace not available for remote flows.")
+            else:
+                if agentic.elapsed_ms is not None:
+                    st.caption(f"Total elapsed: **{agentic.elapsed_ms:.0f} ms** | Threshold: `{config.SIMILARITY_THRESHOLD}` (L2)")
+
+                for it in agentic.iterations:
+                    status = "✅ passed" if it.passed else "❌ retry"
+                    label = f"Loop {it.loop_num} — {status} | best score: {it.best_score:.4f}"
+                    with st.expander(label, expanded=it.passed):
+                        st.caption(f"Query used: _{it.query_used}_")
+                        for j, chunk in enumerate(it.chunks, 1):
+                            st.markdown(f"**[{j}]** score `{chunk.score:.4f}` — `{chunk.source}`")
+                            st.caption(chunk.content[:200])
+
+                if agentic.reranked:
+                    st.divider()
+                    st.warning("Reranking triggered — LLM ranked all candidate chunks by relevance")
+                    st.caption("Final citation order after rerank:")
+                    for i, c in enumerate(agentic.citations, 1):
+                        st.caption(f"[{i}] `{c.source}` (original score: {c.score:.4f})")
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -248,8 +343,12 @@ with tab_ask:
 
     if run_clicked and query.strip():
         if st.session_state.backend_mode == "Local LangChain":
-            with st.spinner("Running local LangChain pipeline…"):
-                st.session_state.local_trace = _local_ask(query)
+            with st.spinner("Running Classic & Agentic RAG pipelines…"):
+                with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                    f_classic = executor.submit(_local_ask, query)
+                    f_agentic = executor.submit(_local_ask_agentic, query)
+                    st.session_state.local_trace = f_classic.result()
+                    st.session_state.local_agentic_trace = f_agentic.result()
         else:
             client = LangflowClient(
                 base_url=st.session_state.langflow_url,
@@ -273,13 +372,22 @@ with tab_ask:
         with col_classic:
             render_classic_panel(st.session_state.local_trace, title="⚙️ Classic RAG")
         with col_agentic:
-            st.subheader("🤖 Agentic RAG")
-            st.info("Agentic RAG coming soon.")
+            render_agentic_panel(st.session_state.local_agentic_trace)
+        st.divider()
+        render_observability_pane(
+            st.session_state.local_trace,
+            st.session_state.local_agentic_trace,
+        )
     else:
         with col_classic:
             render_classic_panel(st.session_state.classic_trace)
         with col_agentic:
             render_agentic_panel(st.session_state.agentic_trace)
+        st.divider()
+        render_observability_pane(
+            st.session_state.classic_trace,
+            st.session_state.agentic_trace,
+        )
 
 
 # ── Ingest tab (Local LangChain only) ────────────────────────────────────────

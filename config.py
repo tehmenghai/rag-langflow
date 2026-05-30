@@ -13,3 +13,8 @@ DOCS_DIR = "./docs"
 # Langflow
 LANGFLOW_BASE_URL = "http://localhost:7860"
 LANGFLOW_REQUEST_TIMEOUT = 120
+
+# Agentic RAG loop control
+# ChromaDB returns L2 distance (lower = better). Threshold below which a retrieval is considered good.
+SIMILARITY_THRESHOLD = 0.8
+MAX_AGENTIC_LOOPS = 3
