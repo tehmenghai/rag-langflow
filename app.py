@@ -14,6 +14,7 @@ import tempfile
 import streamlit as st
 
 import config
+import evaluate as eval_module
 from ingest import ingest, list_sources, delete_by_source, get_all_chunks
 from json_flow_runner import FlowSettings, parse_langflow_json, ask_from_flow
 from langflow_client import ClassicRAGTrace, AgenticRAGTrace, LangflowClient, RetrievedChunk
@@ -38,6 +39,8 @@ _DEFAULTS: dict = {
     "json_trace": None,
     "json_flow_settings": None,
     "langflow_url": config.LANGFLOW_BASE_URL,
+    "eval_results_classic": None,
+    "eval_results_agentic": None,
 }
 for _k, _v in _DEFAULTS.items():
     if _k not in st.session_state:
@@ -382,12 +385,16 @@ st.title("🔍 RAG Playground")
 mode_label = "Local LangChain" if st.session_state.backend_mode == "Local LangChain" else "Langflow + LangChain"
 st.caption(f"Backend: **{mode_label}**")
 
-if st.session_state.backend_mode in ("Local LangChain", "Langflow JSON"):
+if st.session_state.backend_mode == "Local LangChain":
+    tab_ask, tab_ingest, tab_browse, tab_eval = st.tabs(["Ask", "Ingest", "Browse Collection", "Evaluate"])
+elif st.session_state.backend_mode == "Langflow JSON":
     tab_ask, tab_ingest, tab_browse = st.tabs(["Ask", "Ingest", "Browse Collection"])
+    tab_eval = None
 else:
     tab_ask = st.tabs(["Ask"])[0]
     tab_ingest = None
     tab_browse = None
+    tab_eval = None
 
 
 # ── Ask tab ───────────────────────────────────────────────────────────────────
@@ -674,3 +681,138 @@ if tab_browse is not None:
                                     st.caption("  ".join(f"{k}: {v}" for k, v in extra.items()))
                             if i < len(chunks):
                                 st.divider()
+
+
+# ── Evaluate tab (Local LangChain only) ───────────────────────────────────────
+
+if tab_eval is not None:
+    with tab_eval:
+        st.header("Evaluate RAG Pipelines")
+        st.caption(
+            "Runs a 10-question golden set through both Classic and Agentic RAG and scores them "
+            "using RAGAS with Ollama as the judge model."
+        )
+
+        golden = eval_module.load_golden_set()
+        st.info(f"Golden set: **{len(golden)} questions** loaded from `golden_set.json`")
+
+        with st.expander("Preview golden set questions"):
+            for i, item in enumerate(golden, 1):
+                st.markdown(f"**Q{i}:** {item['question']}")
+                st.caption(f"Source: {item.get('source_hint', 'n/a')}")
+                if i < len(golden):
+                    st.divider()
+
+        st.divider()
+
+        run_eval = st.button("▶ Run Evaluation", type="primary")
+
+        if run_eval:
+            def _classic_pipeline_fn(q: str) -> dict:
+                return ask(q, top_k=config.TOP_K, persist_dir=config.CHROMA_DIR,
+                           collection_name=config.CHROMA_COLLECTION)
+
+            def _agentic_pipeline_fn(q: str) -> dict:
+                trace = ask_agentic(q, top_k=config.TOP_K, persist_dir=config.CHROMA_DIR)
+                return {
+                    "answer": trace.answer or "",
+                    "sources": [{"content": c.content, "source": c.source} for c in trace.citations],
+                }
+
+            col_prog_c, col_prog_a = st.columns(2)
+            with col_prog_c:
+                st.caption("Classic RAG")
+                prog_bar_c = st.progress(0.0)
+                prog_text_c = st.empty()
+            with col_prog_a:
+                st.caption("Agentic RAG")
+                prog_bar_a = st.progress(0.0)
+                prog_text_a = st.empty()
+
+            def _cb_classic(done: int, total: int) -> None:
+                prog_bar_c.progress(done / total)
+                prog_text_c.caption(f"Querying {done}/{total}…")
+
+            def _cb_agentic(done: int, total: int) -> None:
+                prog_bar_a.progress(done / total)
+                prog_text_a.caption(f"Querying {done}/{total}…")
+
+            with st.spinner("Running pipelines and scoring with RAGAS…"):
+                with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                    f_classic_eval = executor.submit(
+                        eval_module.run_ragas_eval, golden, _classic_pipeline_fn, _cb_classic
+                    )
+                    f_agentic_eval = executor.submit(
+                        eval_module.run_ragas_eval, golden, _agentic_pipeline_fn, _cb_agentic
+                    )
+                    st.session_state.eval_results_classic = f_classic_eval.result()
+                    st.session_state.eval_results_agentic = f_agentic_eval.result()
+
+        # ── Scorecard display ─────────────────────────────────────────────────
+
+        res_c: dict | None = st.session_state.eval_results_classic
+        res_a: dict | None = st.session_state.eval_results_agentic
+
+        if res_c is not None or res_a is not None:
+            st.divider()
+            st.subheader("Scorecard")
+
+            METRIC_LABELS = {
+                "faithfulness": "Faithfulness",
+                "answer_relevancy": "Answer Relevancy",
+                "context_precision": "Context Precision",
+                "context_recall": "Context Recall",
+            }
+
+            col_c, col_a = st.columns(2, gap="large")
+
+            def _render_scorecard(col, res: dict | None, title: str) -> None:
+                with col:
+                    st.subheader(title)
+                    if res is None:
+                        st.info("No results yet.")
+                        return
+                    if res.get("error"):
+                        st.error(f"Evaluation error: {res['error']}")
+                    weakest = res.get("weakest")
+                    for key, label in METRIC_LABELS.items():
+                        score = res["scores"].get(key, float("nan"))
+                        score_str = f"{score:.3f}" if score == score else "n/a"
+                        is_weakest = key == weakest
+                        tag = " ⚠️ weakest" if is_weakest else ""
+                        st.metric(label=label + tag, value=score_str)
+                    if res.get("elapsed_ms"):
+                        st.caption(f"Total elapsed: {res['elapsed_ms']:.0f} ms")
+
+            _render_scorecard(col_c, res_c, "⚙️ Classic RAG")
+            _render_scorecard(col_a, res_a, "🤖 Agentic RAG")
+
+            # ── Per-question breakdown ────────────────────────────────────────
+
+            st.divider()
+            with st.expander("Per-question breakdown", expanded=False):
+                tab_pq_c, tab_pq_a = st.tabs(["Classic RAG", "Agentic RAG"])
+
+                def _render_per_question(tab, res: dict | None) -> None:
+                    with tab:
+                        if res is None:
+                            st.caption("No results.")
+                            return
+                        pq = res.get("per_question", [])
+                        if not pq:
+                            st.caption("No per-question data.")
+                            return
+                        short_keys = ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
+                        short_labels = ["Faith", "AnsRel", "CtxPrec", "CtxRec"]
+                        for i, row in enumerate(pq, 1):
+                            scores = row.get("scores", {})
+                            score_str = "  ".join(
+                                f"{lbl}: {scores.get(k, float('nan')):.2f}"
+                                for k, lbl in zip(short_keys, short_labels)
+                            )
+                            with st.expander(f"Q{i}: {row['question'][:80]}…"):
+                                st.caption(f"Scores — {score_str}")
+                                st.markdown(f"**Answer:** {row['answer'][:500]}")
+
+                _render_per_question(tab_pq_c, res_c)
+                _render_per_question(tab_pq_a, res_a)

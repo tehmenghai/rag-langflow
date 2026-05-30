@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What roles do the Query, Key, and Value vectors play in the attention mechanism?",
+    "ground_truth": "The Query vector represents what the current token is looking for. The Key vector represents what each token offers to be found. The Value vector represents the content a token contributes when selected. The attention mechanism computes dot products between the Query and all Keys to get attention scores, applies softmax to normalise them, and uses the resulting weights to compute a weighted sum of the Values.",
+    "source_hint": "attention_qkv_atomic_walkthrough.pdf"
+  },
+  {
+    "question": "What are the W_q, W_k, and W_v matrices and how are they used in attention?",
+    "ground_truth": "W_q, W_k, and W_v are learned projection matrices. They transform the same input hidden vector into three separate representations: the Query (what this token seeks), the Key (what this token offers), and the Value (what content this token contributes). They start randomly initialised and are adjusted during training via gradient descent so the projections become useful for the task.",
+    "source_hint": "attention_qkv_atomic_walkthrough.pdf"
+  },
+  {
+    "question": "What happens during the forward pass of a simple two-input perceptron?",
+    "ground_truth": "During the forward pass, the perceptron computes m1 = w1 * x1 and m2 = w2 * x2, sums them as s = m1 + m2, adds the bias to get z = s + b, and computes the loss as squared error: e = z - target, L = e squared. Each operation creates a Value node in a computation graph that stores the result, its parent nodes, and local gradients needed for backpropagation.",
+    "source_hint": "simple_perceptron_forward_backward_walkthrough.pdf"
+  },
+  {
+    "question": "How does backpropagation update weights in a perceptron?",
+    "ground_truth": "Backpropagation applies the chain rule starting from the loss and working backward through the computation graph. Each Value node computes the gradient of the loss with respect to its inputs using its stored local derivatives. Once gradients are accumulated, gradient descent updates each weight by subtracting the learning rate multiplied by the weight's gradient, moving the parameters in the direction that reduces the loss.",
+    "source_hint": "simple_perceptron_forward_backward_walkthrough.pdf"
+  },
+  {
+    "question": "What is the purpose of the key/value cache in the Tiny GPT model?",
+    "ground_truth": "The key/value cache stores the Key and Value projections computed for all previous token positions. When processing the current token, the model attends over these cached values without recomputing them, making inference more efficient. As each new token is generated, its K and V projections are appended to the cache so future positions can attend to it.",
+    "source_hint": "tiny_gpt_16_point_detailed_walkthrough_v2.pdf"
+  },
+  {
+    "question": "How does a character-level GPT model learn to generate text?",
+    "ground_truth": "A character-level GPT learns by predicting the next character in a sequence. For each training example it runs a forward pass to produce predictions, computes the loss (cross-entropy between predicted and actual next characters), then backpropagates gradients through every scalar operation and updates weights via gradient descent. Repeating this process across many examples teaches the model statistical patterns of character sequences.",
+    "source_hint": "tiny_gpt_16_point_detailed_walkthrough_v2.pdf"
+  },
+  {
+    "question": "What is the primary training objective of a large language model?",
+    "ground_truth": "The primary training objective of a large language model is next-token prediction (autoregressive language modelling). Given a sequence of tokens, the model is trained to predict the next token at each position. The loss is the cross-entropy between the model's predicted probability distribution over the vocabulary and the actual next token, summed across all positions.",
+    "source_hint": "swarup-biswas-training-how-llm-work-v1.pdf"
+  },
+  {
+    "question": "What is tokenisation and why is it the first step in LLM processing?",
+    "ground_truth": "Tokenisation converts raw text into a sequence of integer IDs (tokens) that the model can process. It is the first step because neural networks operate on numerical inputs, not raw characters or words. A tokeniser (such as BPE) splits text into sub-word units, maps each unit to an ID in a fixed vocabulary, and the model learns an embedding vector for each ID.",
+    "source_hint": "swarup-biswas-training-how-llm-work-v1.pdf"
+  },
+  {
+    "question": "What is backpropagation and how does it compute gradients through a neural network?",
+    "ground_truth": "Backpropagation is an efficient algorithm for computing the gradient of the loss with respect to every parameter in a neural network. Starting from the loss, it applies the chain rule of calculus layer by layer in reverse order. Each operation's local gradient is multiplied by the incoming gradient from the layer above, and the result is passed to the layer below. This produces exact gradients for all parameters in a single backward pass.",
+    "source_hint": "Ian Goodfellow, Yoshua Bengio, Aaron Courville - Deep Learning (2017, MIT).pdf"
+  },
+  {
+    "question": "What is the vanishing gradient problem and why does it occur in deep networks?",
+    "ground_truth": "The vanishing gradient problem occurs when gradients become exponentially small as they are backpropagated through many layers. It arises because gradients are multiplied by weight matrices and activation function derivatives at each layer; if these values are less than one, repeated multiplication causes them to shrink toward zero. As a result, early layers receive near-zero gradients and learn very slowly or not at all. Techniques such as ReLU activations, batch normalisation, and residual connections help mitigate this problem.",
+    "source_hint": "Ian Goodfellow, Yoshua Bengio, Aaron Courville - Deep Learning (2017, MIT).pdf"
+  }
+]
