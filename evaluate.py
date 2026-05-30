@@ -1,6 +1,7 @@
 """RAGAS evaluation module — run a golden set against Classic and Agentic RAG pipelines."""
 from __future__ import annotations
 
+import asyncio
 import json
 import sys
 import time
@@ -8,54 +9,80 @@ from pathlib import Path
 from types import ModuleType
 from typing import Callable
 
-# ── Compatibility shim: ragas 0.2.x imports langchain_community.chat_models.vertexai
-# which was removed in langchain-community 0.3+. Stub it out before importing ragas.
-if "langchain_community.chat_models.vertexai" not in sys.modules:
-    from langchain_core.language_models.chat_models import BaseChatModel
-
-    _stub = ModuleType("langchain_community.chat_models.vertexai")
-
-    class _ChatVertexAI(BaseChatModel):
-        def _generate(self, *args, **kwargs):
-            raise NotImplementedError("Stub — install langchain-google-vertexai for VertexAI support.")
-
-        @property
-        def _llm_type(self):
-            return "vertexai"
-
-    _stub.ChatVertexAI = _ChatVertexAI
-    sys.modules["langchain_community.chat_models.vertexai"] = _stub
-
-from ragas import EvaluationDataset, SingleTurnSample, evaluate
-from ragas.embeddings import LangchainEmbeddingsWrapper
-from ragas.llms import LangchainLLMWrapper
-from ragas.metrics import (
-    answer_relevancy,
-    context_precision,
-    context_recall,
-    faithfulness,
-)
-
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 
 import config
 
 GOLDEN_SET_PATH = Path(__file__).parent / "golden_set.json"
 METRIC_NAMES = ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
-ALL_METRICS = [faithfulness, answer_relevancy, context_precision, context_recall]
+
+
+def _install_vertexai_stub() -> None:
+    """Stub out langchain_community.chat_models.vertexai so ragas 0.2.x can import."""
+    if "langchain_community.chat_models.vertexai" not in sys.modules:
+        from langchain_core.language_models.chat_models import BaseChatModel
+
+        stub = ModuleType("langchain_community.chat_models.vertexai")
+
+        class _ChatVertexAI(BaseChatModel):
+            def _generate(self, *args, **kwargs):
+                raise NotImplementedError("Stub — install langchain-google-vertexai.")
+
+            @property
+            def _llm_type(self):
+                return "vertexai"
+
+        stub.ChatVertexAI = _ChatVertexAI
+        sys.modules["langchain_community.chat_models.vertexai"] = stub
+
+
+def _ensure_patchable_event_loop() -> None:
+    """Replace uvloop with a standard asyncio loop so nest_asyncio can patch it.
+
+    ragas/executor.py calls nest_asyncio.apply() at import time. nest_asyncio
+    cannot patch uvloop.Loop (used by Streamlit). Running this before the first
+    ragas import swaps in a standard loop that nest_asyncio accepts.
+    """
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop is None or "uvloop" in type(loop).__module__:
+        new_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(new_loop)
+
+
+def _import_ragas():
+    """Lazily import ragas after ensuring compatibility preconditions."""
+    _install_vertexai_stub()
+    _ensure_patchable_event_loop()
+
+    from ragas import EvaluationDataset, SingleTurnSample  # noqa: PLC0415
+    from ragas import evaluate as ragas_evaluate  # noqa: PLC0415
+    from ragas.embeddings import LangchainEmbeddingsWrapper  # noqa: PLC0415
+    from ragas.llms import LangchainLLMWrapper  # noqa: PLC0415
+    from ragas.metrics import (  # noqa: PLC0415
+        answer_relevancy,
+        context_precision,
+        context_recall,
+        faithfulness,
+    )
+
+    return (
+        EvaluationDataset,
+        SingleTurnSample,
+        ragas_evaluate,
+        LangchainLLMWrapper,
+        LangchainEmbeddingsWrapper,
+        [faithfulness, answer_relevancy, context_precision, context_recall],
+    )
 
 
 def load_golden_set(path: str | Path = GOLDEN_SET_PATH) -> list[dict]:
     """Load the golden set JSON. Returns list of {question, ground_truth, source_hint}."""
     with open(path) as f:
         return json.load(f)
-
-
-def _make_judge():
-    """Build RAGAS-compatible LLM and embedding wrappers using local Ollama."""
-    llm = OllamaLLM(model=config.LLM_MODEL, base_url=config.OLLAMA_BASE_URL)
-    emb = OllamaEmbeddings(model=config.EMBED_MODEL, base_url=config.OLLAMA_BASE_URL)
-    return LangchainLLMWrapper(llm), LangchainEmbeddingsWrapper(emb)
 
 
 def run_ragas_eval(
@@ -73,14 +100,35 @@ def run_ragas_eval(
     Returns:
         {
           "scores": {"faithfulness": float, "answer_relevancy": float, ...},
+          "weakest": str | None,
           "per_question": [{"question", "answer", "scores": {...}}],
           "elapsed_ms": float,
           "error": str | None,
         }
     """
     t0 = time.time()
+
+    # Import ragas lazily here so the event-loop swap happens before nest_asyncio.apply()
+    try:
+        (
+            EvaluationDataset,
+            SingleTurnSample,
+            ragas_evaluate,
+            LangchainLLMWrapper,
+            LangchainEmbeddingsWrapper,
+            all_metrics,
+        ) = _import_ragas()
+    except Exception as exc:
+        return {
+            "scores": {k: float("nan") for k in METRIC_NAMES},
+            "weakest": None,
+            "per_question": [],
+            "elapsed_ms": (time.time() - t0) * 1000,
+            "error": f"Failed to import ragas: {exc}",
+        }
+
+    per_question: list[dict] = []
     samples = []
-    per_question = []
     total = len(golden_set)
 
     for i, item in enumerate(golden_set):
@@ -108,12 +156,13 @@ def run_ragas_eval(
             progress_callback(i + 1, total)
 
     dataset = EvaluationDataset(samples=samples)
-    judge_llm, judge_emb = _make_judge()
+    judge_llm = LangchainLLMWrapper(OllamaLLM(model=config.LLM_MODEL, base_url=config.OLLAMA_BASE_URL))
+    judge_emb = LangchainEmbeddingsWrapper(OllamaEmbeddings(model=config.EMBED_MODEL, base_url=config.OLLAMA_BASE_URL))
 
     try:
-        result = evaluate(
+        result = ragas_evaluate(
             dataset,
-            metrics=ALL_METRICS,
+            metrics=all_metrics,
             llm=judge_llm,
             embeddings=judge_emb,
             show_progress=False,
@@ -128,9 +177,9 @@ def run_ragas_eval(
             else:
                 aggregate[col] = float("nan")
 
-        for i, row in df.iterrows():
+        for idx, row in df.iterrows():
             for col in METRIC_NAMES:
-                per_question[i]["scores"][col] = round(float(row.get(col, float("nan"))), 4)
+                per_question[idx]["scores"][col] = round(float(row.get(col, float("nan"))), 4)
 
         weakest = min(
             (k for k in aggregate if aggregate[k] == aggregate[k]),  # skip NaN
