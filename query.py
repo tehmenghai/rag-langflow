@@ -16,16 +16,28 @@ Question: {question}
 Answer:"""
 
 
-def load_vectorstore(persist_dir: str = config.CHROMA_DIR) -> Chroma:
+def load_vectorstore(
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> Chroma:
     embeddings = OllamaEmbeddings(
         model=config.EMBED_MODEL,
         base_url=config.OLLAMA_BASE_URL,
     )
-    return Chroma(persist_directory=persist_dir, embedding_function=embeddings)
+    return Chroma(
+        persist_directory=persist_dir,
+        embedding_function=embeddings,
+        collection_name=collection_name,
+    )
 
 
-def ask(question: str, top_k: int = config.TOP_K, persist_dir: str = config.CHROMA_DIR) -> dict:
-    vectorstore = load_vectorstore(persist_dir)
+def ask(
+    question: str,
+    top_k: int = config.TOP_K,
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> dict:
+    vectorstore = load_vectorstore(persist_dir, collection_name)
     retriever = vectorstore.as_retriever(search_kwargs={"k": top_k})
 
     docs = retriever.invoke(question)

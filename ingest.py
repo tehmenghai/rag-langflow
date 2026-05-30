@@ -39,21 +39,29 @@ def split_documents(docs: list, chunk_size: int, chunk_overlap: int) -> list:
     return splitter.split_documents(docs)
 
 
-def get_vectorstore(persist_dir: str = config.CHROMA_DIR) -> Chroma:
+def get_vectorstore(
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> Chroma:
     embeddings = OllamaEmbeddings(
         model=config.EMBED_MODEL,
         base_url=config.OLLAMA_BASE_URL,
     )
-    return Chroma(persist_directory=persist_dir, embedding_function=embeddings)
+    return Chroma(
+        persist_directory=persist_dir,
+        embedding_function=embeddings,
+        collection_name=collection_name,
+    )
 
 
 def embed_and_store(
     chunks: list,
     persist_dir: str,
+    collection_name: str = config.CHROMA_COLLECTION,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> Chroma:
     """Embed chunks in batches and store in ChromaDB. Calls progress_callback(done, total)."""
-    vs = get_vectorstore(persist_dir)
+    vs = get_vectorstore(persist_dir, collection_name)
     total = len(chunks)
     embed_batch = 100  # chunks per Ollama embedding call batch
     for i in range(0, total, embed_batch):
@@ -69,6 +77,7 @@ def ingest(
     chunk_size: int = config.CHUNK_SIZE,
     chunk_overlap: int = config.CHUNK_OVERLAP,
     persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> int:
     print(f"Loading documents from {source_dir} ...")
@@ -82,7 +91,7 @@ def ingest(
     print(f"  Created {len(chunks)} chunk(s).")
 
     print("Embedding and storing in Chroma ...")
-    embed_and_store(chunks, persist_dir, progress_callback=progress_callback)
+    embed_and_store(chunks, persist_dir, collection_name, progress_callback=progress_callback)
     print(f"  Done. Vectorstore persisted to {persist_dir}")
     return len(chunks)
 
@@ -104,15 +113,21 @@ def _iter_all_in_batches(collection, include: list[str]) -> list[dict]:
     return {"ids": all_ids, "documents": all_docs, "metadatas": all_metas}
 
 
-def get_all_chunks(persist_dir: str = config.CHROMA_DIR) -> dict:
+def get_all_chunks(
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> dict:
     """Return all chunks with ids, documents, and metadatas from ChromaDB."""
-    vs = get_vectorstore(persist_dir)
+    vs = get_vectorstore(persist_dir, collection_name)
     return _iter_all_in_batches(vs._collection, include=["documents", "metadatas"])
 
 
-def list_sources(persist_dir: str = config.CHROMA_DIR) -> list[str]:
+def list_sources(
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> list[str]:
     """Return sorted list of unique source filenames stored in ChromaDB."""
-    vs = get_vectorstore(persist_dir)
+    vs = get_vectorstore(persist_dir, collection_name)
     data = _iter_all_in_batches(vs._collection, include=["metadatas"])
     sources = {
         Path(m["source"]).name
@@ -122,9 +137,13 @@ def list_sources(persist_dir: str = config.CHROMA_DIR) -> list[str]:
     return sorted(sources)
 
 
-def delete_by_source(source_name: str, persist_dir: str = config.CHROMA_DIR) -> int:
+def delete_by_source(
+    source_name: str,
+    persist_dir: str = config.CHROMA_DIR,
+    collection_name: str = config.CHROMA_COLLECTION,
+) -> int:
     """Delete all chunks whose source filename matches source_name. Returns count deleted."""
-    vs = get_vectorstore(persist_dir)
+    vs = get_vectorstore(persist_dir, collection_name)
     data = _iter_all_in_batches(vs._collection, include=["metadatas"])
     ids_to_delete = [
         doc_id

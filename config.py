@@ -7,6 +7,7 @@ LLM_MODEL = "llama3.2"
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 CHROMA_DIR = "./chroma_db"
+CHROMA_COLLECTION = "local_rag"
 DOCS_DIR = "./docs"
 
 # Langflow
