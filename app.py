@@ -324,17 +324,35 @@ if tab_ingest is not None:
                     with open(dest, "wb") as out:
                         out.write(f.getbuffer())
 
-                with st.spinner("Loading → chunking → embedding → storing …"):
-                    try:
-                        n_chunks = ingest(
-                            source_dir=tmp_dir,
-                            chunk_size=chunk_size,
-                            chunk_overlap=chunk_overlap,
-                            persist_dir=config.CHROMA_DIR,
-                        )
-                        st.success(f"Done! Created {n_chunks} chunks from {len(uploaded_files)} file(s).")
-                    except Exception as e:
-                        st.error(f"Ingestion failed: {e}")
+                try:
+                    from ingest import load_documents, split_documents
+
+                    with st.spinner("Loading and chunking documents…"):
+                        docs = load_documents(tmp_dir)
+                        if not docs:
+                            st.error("No readable content found in the uploaded file(s).")
+                            st.stop()
+                        chunks = split_documents(docs, chunk_size, chunk_overlap)
+
+                    n_chunks = len(chunks)
+                    st.info(f"Created **{n_chunks} chunks** from {len(uploaded_files)} file(s). Starting embedding…")
+
+                    progress_bar = st.progress(0.0)
+                    status_text = st.empty()
+
+                    def _update_progress(done: int, total: int) -> None:
+                        pct = done / total
+                        progress_bar.progress(pct)
+                        status_text.caption(f"Embedding chunk {done} / {total}")
+
+                    from ingest import embed_and_store
+                    embed_and_store(chunks, config.CHROMA_DIR, progress_callback=_update_progress)
+
+                    progress_bar.progress(1.0)
+                    status_text.empty()
+                    st.success(f"Done! Stored {n_chunks} chunks from {len(uploaded_files)} file(s).")
+                except Exception as e:
+                    st.error(f"Ingestion failed: {e}")
 
         st.divider()
         st.subheader("Or ingest sample docs")
