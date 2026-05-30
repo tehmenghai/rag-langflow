@@ -719,31 +719,16 @@ if tab_eval is not None:
                     "sources": [{"content": c.content, "source": c.source} for c in trace.citations],
                 }
 
-            col_prog_c, col_prog_a = st.columns(2)
-            with col_prog_c:
-                st.caption("Classic RAG")
-                prog_bar_c = st.progress(0.0)
-                prog_text_c = st.empty()
-            with col_prog_a:
-                st.caption("Agentic RAG")
-                prog_bar_a = st.progress(0.0)
-                prog_text_a = st.empty()
-
-            def _cb_classic(done: int, total: int) -> None:
-                prog_bar_c.progress(done / total)
-                prog_text_c.caption(f"Querying {done}/{total}…")
-
-            def _cb_agentic(done: int, total: int) -> None:
-                prog_bar_a.progress(done / total)
-                prog_text_a.caption(f"Querying {done}/{total}…")
-
-            with st.spinner("Running pipelines and scoring with RAGAS…"):
+            with st.spinner(
+                f"Querying both pipelines across {len(golden)} questions and scoring with RAGAS "
+                f"(judge: `{config.LLM_MODEL}`) — this takes a few minutes…"
+            ):
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
                     f_classic_eval = executor.submit(
-                        eval_module.run_ragas_eval, golden, _classic_pipeline_fn, _cb_classic
+                        eval_module.run_ragas_eval, golden, _classic_pipeline_fn
                     )
                     f_agentic_eval = executor.submit(
-                        eval_module.run_ragas_eval, golden, _agentic_pipeline_fn, _cb_agentic
+                        eval_module.run_ragas_eval, golden, _agentic_pipeline_fn
                     )
                     st.session_state.eval_results_classic = f_classic_eval.result()
                     st.session_state.eval_results_agentic = f_agentic_eval.result()
