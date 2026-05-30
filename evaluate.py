@@ -37,20 +37,14 @@ def _install_vertexai_stub() -> None:
 
 
 def _ensure_patchable_event_loop() -> None:
-    """Replace uvloop with a standard asyncio loop so nest_asyncio can patch it.
+    """Set a standard asyncio loop so nest_asyncio can patch it.
 
-    ragas/executor.py calls nest_asyncio.apply() at import time. nest_asyncio
-    cannot patch uvloop.Loop (used by Streamlit). Running this before the first
-    ragas import swaps in a standard loop that nest_asyncio accepts.
+    Streamlit sets uvloop.EventLoopPolicy() globally, so asyncio.new_event_loop()
+    creates uvloop.Loop even in worker threads — which nest_asyncio cannot patch.
+    We bypass the global policy by using DefaultEventLoopPolicy directly.
     """
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = None
-
-    if loop is None or "uvloop" in type(loop).__module__:
-        new_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(new_loop)
+    standard_loop = asyncio.DefaultEventLoopPolicy().new_event_loop()
+    asyncio.set_event_loop(standard_loop)
 
 
 def _import_ragas():
